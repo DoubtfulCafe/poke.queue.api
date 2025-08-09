@@ -3,7 +3,7 @@ import json
 import os
 from fastapi import FastAPI
 from utils.database import execute_query_json
-from controllers.PokeRequestController import insert_pokemon_request
+from controllers.PokeRequestController import insert_pokemon_request , update_pokemon_request , select_pokemon_request
 from models.PokeRequest import PokemonRequest
 
 app = FastAPI()
@@ -17,12 +17,26 @@ async def root():
 
 @app.get("/api/version")
 async def version():
-    return { "version": "0.1.0" }
+    return { "version":  "0.3.1" }
+
+
+@app.get("/api/request/{id}")
+async def select_request(id: int):
+    return await select_pokemon_request(id)
+
+@app.get("/api/request")
+async def select_all_request():
+    return await get_all_request()
 
 @app.post("/api/request")
 async def create_request(pokemon_request: PokemonRequest):
-    return await insert_pokemon_request(pokemon_request)
+    return await insert_pokemon_request( pokemon_request )
+
+@app.put("/api/request")
+async def update_request(pokemon_request: PokemonRequest):
+    return await update_pokemon_request( pokemon_request )
+
+
 
 if __name__ == "__main__":
-    import uvicorn
     uvicorn.run(app, host="0.0.0.0", port=8000)
